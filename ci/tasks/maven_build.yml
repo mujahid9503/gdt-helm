@@ -1,0 +1,26 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: hub.comcast.net/svc-rdk-analytics-gdt-artifact/debian-git
+    tag: latest
+    username: ((serviceaccount.username))
+    password: ((serviceaccount.password))
+inputs:
+  - name: gdt-testing-phase
+    path: gdt-testing-phase/
+run:
+  path: /bin/sh
+  args:
+  - -c
+  - |
+    apt update
+    apt install -y openjdk-17-jdk
+    java -version
+    cd gdt-testing-phase/
+    apt install -y maven
+    mvn -N wrapper:wrapper
+    mvn clean verify
+outputs:
+  - name: gdt-testing-phase

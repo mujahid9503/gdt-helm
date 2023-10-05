@@ -1,0 +1,41 @@
+resource_types:
+- name: ssh
+  type: docker-image
+  source:
+    repository: edtan1/concourse-ssh-resource
+#Where we deploy into Ec2 instance(Mumbai)
+resources:
+  - name: ec2-ssh-mumbai
+    type: ssh
+    source:
+      hostname: ec2-3-7-73-24.ap-south-1.compute.amazonaws.com
+      username: ((username))
+      private_key: ((mumbai-private-key))
+
+# The repo with our Dockerfile
+  - name: gdt-project-test
+    type: git
+    source:
+      uri: https://github.comcast.com/mahmed548/gdt-testing-phase.git
+      branch: main
+      username: ((git-username))
+      password: ((git-password))
+# Where we will push the image
+  - name: springboot-test
+    type: docker-image
+    source:
+      username: ((hub-username))
+      password: ((hub-password))
+      repository: 23380/test-image-9
+
+jobs:
+  - name: build-deploy
+    plan:
+      - get: gdt-project-test
+        trigger: true
+      - put: springboot-test
+        params:
+          build: gdt-project-test
+      - put: ec2-ssh-mumbai
+        params:
+          command: cd /home/ubuntu/helmdemo/ && helm install deployment1 spapplication

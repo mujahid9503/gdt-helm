@@ -1,0 +1,67 @@
+resource_types:
+- name: helm
+  type: docker-image
+  source:
+    repository: typositoire/concourse-helm3-resource
+
+resources:
+  - name: gdt-testing-phase
+    type: git
+    source:
+      uri: https://github.com/mujahid9503/helm-repo.git
+      branch: main
+      username: mujahid9503
+      password: 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
+
+  - name: springboot-test
+    type: docker-image
+    source:
+      username: 23380
+      password: Smokings@23
+      repository: 23380/test-image-9
+
+  - name: helm-chart
+    type: helm
+    source:
+      cluster_url: https://1A0AF517CD5EF147F805FBFF4BDDD8E5.gr7.ap-south-1.eks.amazonaws.com
+      cluster_ca: |
+        -----BEGIN CERTIFICATE-----
+        MIIDBTCCAe2gAwIBAgIINTUgxtyKSxIwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+        AxMKa3ViZXJuZXRlczAeFw0yMzEwMDQwNzUzMzBaFw0zMzEwMDEwNzU4MzBaMBUx
+        EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+        AoIBAQDJNczlX7GouSA0ugKrEQgUjnkrSM4M9ZhTbvAq+V0CkTM5uC8lB3OnyLce
+        Ox09O4QhhqveDGOx/wJ2Rc2EAGn7G0w6BSc4+f/GlYdJM4iowZWUDgIF4FKSwBPs
+        pdMIXm/x3VcH5iAYNSX5NZCAGWyE125yuaDMkTwhxswImi11/iUGh1zYi5xYVKDv
+        skXjmbrNr7nG4fcKWOJs0nNnV9KMMs99BJ43A0zKm1SvuBSL97z3dVqE2k/7nc3M
+        h0kSOWNa8cC43mfs47Pki+NY6gG81RllmWCg+Idd3rz/jB4aDyE9psiv/8iXzLH4
+        4dFUD041VCX5/gfigub5Sr42YdWpAgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
+        BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQgg3ESeHhakuiHQ+bzYa4iUNTXQTAV
+        BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQC+mSTUAZZD
+        ECtaC+7q0sseQPyfFGAes8DAnT1Wrq6l2JhULDCzDKPF3RJRmyh8RsRMq9xHNw+m
+        6h6/OjfFwEf5FP765V0QEYOGXvBqQxdej5t6LGfuBGqjYLpB6Y1g6rYWdnDzXPRJ
+        weZzLCNLzvziYRcaSq3zMsec+Q47NN2W3DFPhehCYlFJIMWCpmqkIkNp1la/qDR5
+        6eKZPsBKVfuskysj/ybJci43S7s58YoZb99IcE4JjhxY8cT3Guk+xvmJ8OVxSZaU
+        tfMMKT9BcuB7v0uxoz1mX8OiWTlE4iIeDeEGY21ed+yZFW+DJByz+OoJgazBjqfa
+        xk7iu0PA6E/B
+        -----END CERTIFICATE-----
+      token: "k8s-aws-v1.aHR0cHM6Ly9zdHMuYXAtc291dGgtMS5hbWF6b25hd3MuY29tLz9BY3Rpb249R2V0Q2FsbGVySWRlbnRpdHkmVmVyc2lvbj0yMDExLTA2LTE1JlgtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVJLWUkySlVRQzZPMlZVREslMkYyMDIzMTAwNCUyRmFwLXNvdXRoLTElMkZzdHMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMTAwNFQxMzE4MjNaJlgtQW16LUV4cGlyZXM9NjAmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JTNCeC1rOHMtYXdzLWlkJlgtQW16LVNpZ25hdHVyZT00N2IxYWJlYzI5MmVjMDFjZWQ5ODc2ZmNjZDA1YTNmMWRlN2NkYmJmNWE3YmYyZDU4MjdhOTA5YTI0N2NiNTUw"
+      repos:
+        - name: git-repo
+          url: https://mujahid9503.github.io/helm-repo/
+
+
+    
+jobs:
+- name: build-and-push-docker-image
+  serial: false
+  plan:
+  - get: gdt-testing-phase
+    trigger: true
+  - put: springboot-test
+    params:
+      build: gdt-testing-phase/
+  - put: helm-chart
+    params:
+      chart: git-repo/helmchart
+      release: deploy
+      uninstall: true

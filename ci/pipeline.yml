@@ -1,0 +1,54 @@
+resource_types:
+- name: ssh
+  type: docker-image
+  source:
+    repository: edtan1/concourse-ssh-resource
+#Where we deploy into Ec2 instance(Mumbai)
+resources:
+  - name: ec2-ssh-mumbai
+    type: ssh
+    source:
+      hostname: ((mumbai-hostname))
+      username: ((username))
+      private_key: ((mumbai-private-key))
+#Where we deploy into Ec2 instance(London)
+  - name: ec2-ssh-london
+    type: ssh
+    source:
+      hostname: ((london-hostname))
+      username: ((username))
+      private_key: ((london-private-key))
+# The repo with our Dockerfile
+  - name: gdt-project-test
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: main
+      username: ((username-git))
+      password: ((git-password))
+# Where we will push the image
+  - name: springboot-test
+    type: docker-image
+    source:
+      username: ((username-hub))
+      password: ((hub-password))
+      repository: 23380/test-image-9
+
+jobs:
+  - name: build-deploy
+    plan:
+      - get: gdt-project-test
+        trigger: true
+      - put: springboot-test
+        params:
+          build: gdt-project-test
+      - put: ec2-ssh-mumbai
+        params:
+          command: sudo docker rm -f mycontnr
+          command: sudo docker pull 23380/test-image-9
+          command: sudo docker run -d -p 8085:8085 --name mycontnr 23380/test-image-9
+      - put: ec2-ssh-london
+        params:
+          command: sudo docker rm -f mycontnr
+          command: sudo docker pull 23380/test-image-9
+          command: sudo docker run -d -p 8085:8085 --name mycontnr 23380/test-image-9
