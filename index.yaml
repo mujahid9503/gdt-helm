@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  helmchart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2023-10-05T12:15:23.7304627+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 859aa6fff2b38bd984faa46e3cca771d6e10dbf6a913b82e10366b0de75c728a
+    name: helmchart
+    type: application
+    urls:
+    - https://github.com/mujahid9503/gdt-helm.git/helmchart-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-10-05T12:15:23.7294357+05:30"
