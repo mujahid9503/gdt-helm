@@ -8,10 +8,10 @@ image_resource:
     tag: latest
 
 inputs:
-  - name: scripts
+  - name: gdt-testing-phase
 
 outputs:
   - name: got_token
 
 run:
-  path: scripts/ci/tasks/get_eks_auth_token.sh
+  path: gdt-testing-phase/ci/tasks/get_eks_auth_token.sh
