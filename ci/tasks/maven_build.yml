@@ -14,12 +14,8 @@ run:
   args:
   - -c
   - |
-    apt update
-    apt install -y openjdk-17-jdk
     java -version
     cd gdt-testing-phase/
-    apt install -y maven
-    mvn -N wrapper:wrapper
-    mvn clean verify
+    mvn clean package
 outputs:
   - name: gdt-testing-phase
