@@ -1,0 +1,61 @@
+resource_types:
+- name: helm
+  type: docker-image
+  source:
+    repository: typositoire/concourse-helm3-resource
+
+resources:
+  - name: gdt-testing-phase
+    type: git
+    source:
+      uri: https://github.com/mujahid9503/gdt-helm.git
+      branch: main
+      username: ((git-username))
+      password: ((git-password))
+
+  - name: docker-hub
+    type: docker-image
+    source:
+      username: ((hub-username))
+      password: ((hub-password))
+      repository: 23380/test-image-9
+
+  - name: helm-deploy-mumbai
+    type: helm
+    source:
+      cluster_url: https://83698CD24CE23277E76110C9F930A5A0.gr7.ap-south-1.eks.amazonaws.com
+      cluster_ca: ((cluster-ca-mumbai))
+      token: ((token-mumbai))
+      repos:
+        - name: git-repo
+          url: https://mujahid9503.github.io/gdt-helm/
+
+  - name: helm-deploy-london
+    type: helm
+    source:
+      cluster_url: https://974A113BF202CC9DC25AFD70B39ABB98.gr7.eu-west-2.eks.amazonaws.com
+      cluster_ca: ((cluster-ca-london))
+      token: ((token-london))
+      repos:
+        - name: git-repo
+          url: https://mujahid9503.github.io/gdt-helm/
+
+jobs:
+- name: build-and-push-docker-image
+  serial: false
+  plan:
+  - get: gdt-testing-phase
+    trigger: true
+  - put: docker-hub
+    params:
+      build: gdt-testing-phase/
+  - put: helm-deploy-mumbai
+    params:
+      chart: git-repo/helmchart
+      release: deploy
+      uninstall: false
+  - put: helm-deploy-london
+    params:
+      chart: git-repo/helmchart
+      release: deploy
+      uninstall: false
