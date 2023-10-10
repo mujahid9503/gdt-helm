@@ -3,8 +3,8 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: yriscob/java17-maven3.3.9-builder
-    tag: latest
+    repository: benturner/debiangit
+    tag: 0.0.1
 
 inputs:
   - name: gdt-testing-phase
@@ -14,8 +14,11 @@ run:
   args:
   - -c
   - |
+    apt update
+    apt install -y openjdk-17-jdk
     java -version
     cd gdt-testing-phase/
+    apt install -y maven
     mvn clean package
 outputs:
   - name: gdt-testing-phase
