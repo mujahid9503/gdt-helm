@@ -3,10 +3,9 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: hub.comcast.net/svc-rdk-analytics-gdt-artifact/debian-git
+    repository: yriscob/java17-maven3.3.9-builder
     tag: latest
-    username: svc-gdtanalytics
-    password: B,TFS2lNEqH~q-zc8N3I>iTjzn7qnItm
+
 inputs:
   - name: gdt-testing-phase
     path: gdt-testing-phase/
