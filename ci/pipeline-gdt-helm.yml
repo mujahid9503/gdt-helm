@@ -7,6 +7,7 @@ resource_types:
 resources:
   - name: gdt-testing-phase
     type: git
+    webhook_token: ((github-webhook-token))
     source:
       uri: https://github.com/mujahid9503/gdt-helm.git
       branch: main
@@ -46,6 +47,8 @@ jobs:
   plan:
   - get: gdt-testing-phase
     trigger: true
+  - task: jar-build-gdt
+    file: gdt-testing-phase/ci/tasks/maven_build.yml
   - put: docker-hub
     params:
       build: gdt-testing-phase/

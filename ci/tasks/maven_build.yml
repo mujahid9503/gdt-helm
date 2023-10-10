@@ -5,8 +5,8 @@ image_resource:
   source:
     repository: hub.comcast.net/svc-rdk-analytics-gdt-artifact/debian-git
     tag: latest
-    username: ((serviceaccount.username))
-    password: ((serviceaccount.password))
+    username: svc-gdtanalytics
+    password: B,TFS2lNEqH~q-zc8N3I>iTjzn7qnItm
 inputs:
   - name: gdt-testing-phase
     path: gdt-testing-phase/
