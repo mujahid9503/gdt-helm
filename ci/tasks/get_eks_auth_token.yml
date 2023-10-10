@@ -4,7 +4,9 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: hub.comcast.net/ottx/thor-xre-build-tools
+    repository: 23380/test-image-9
+    username: ((hub-username))
+    password: ((hub-password))
     tag: latest
 
 inputs:
