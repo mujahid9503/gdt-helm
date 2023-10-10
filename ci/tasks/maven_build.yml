@@ -3,8 +3,8 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: benturner/debiangit
-    tag: 0.0.1
+    repository: yriscob/java17-maven3.3.9-builder
+    tag: latest
 
 inputs:
   - name: gdt-testing-phase
