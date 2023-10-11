@@ -4,6 +4,11 @@ resource_types:
   source:
     repository: typositoire/concourse-helm3-resource
 
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
 resources:
   - name: gdt-testing-phase
     type: git
@@ -20,7 +25,6 @@ resources:
       username: ((hub-username))
       password: ((hub-password))
       repository: 23380/test-image-9
-      tag: 1.0.0
 
   - name: helm-deploy-mumbai
     type: helm
@@ -41,7 +45,13 @@ resources:
       repos:
         - name: git-repo
           url: https://mujahid9503.github.io/gdt-helm/
-
+  
+  - name: slack
+    type: slack-notification
+    icon: slack
+    source:
+      url: https://hooks.slack.com/services/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
+    
 jobs:
 - name: build-and-deploy
   serial: false
@@ -63,3 +73,13 @@ jobs:
       chart: git-repo/helmchart
       release: deploy
       uninstall: false
+  on_success:
+    put: slack 
+    params:
+      text: "Image successfully pushed to Hub.."
+      silent: true
+  on_failure:
+    put: slack
+    params:
+      text: "Failed to push image to Hub.."
+      silent: true
