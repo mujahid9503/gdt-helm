@@ -4,11 +4,6 @@ resource_types:
   source:
     repository: typositoire/concourse-helm3-resource
 
-- name: slack-notification
-  type: docker-image
-  source:
-    repository: cfcommunity/slack-notification-resource
-
 resources:
   - name: gdt-testing-phase
     type: git
@@ -46,12 +41,6 @@ resources:
         - name: git-repo
           url: https://mujahid9503.github.io/gdt-helm/
 
-  - name: slack
-    type: slack-notification
-    icon: slack
-    source:
-      url: https://hooks.slack.com/services/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
-
 jobs:
 - name: build-and-push
   serial: false
@@ -63,55 +52,25 @@ jobs:
   - put: docker-hub
     params:
       build: gdt-testing-phase/
-  on_success:
-    put: slack
-    params:
-      text: "Build and Pushed image to Hub is completed..:yay:"
-      silent: true
-  on_failure:
-    put: slack
-    params:
-      text: "Failed to Build and push image.."
-      silent: true
-- name: deploy asia region
+- name: deploy-asia-region
   serial: false
-  plan: 
+  plan:
   - get: gdt-testing-phase
-    passed: [build-and-deploy]
+    passed: [build-and-push]
     trigger: true
   - put: helm-deploy-mumbai
     params:
       chart: git-repo/helmchart
       release: deploy
       uninstall: false
-  on_success:
-    put: slack
-    params:
-      text: "Deployment is successful in Asia region..:yay:"
-      silent: true
-  on_failure:
-    put: slack
-    params:
-      text: "Deployment failed in Asia region.."
-      silent: true
-- name: deploy europe region
+- name: deploy-europe-region
   serial: false
-  plan:  
+  plan:
   - get: gdt-testing-phase
-    passed: [build-and-deploy]
+    passed: [build-and-push]
     trigger: true
   - put: helm-deploy-london
     params:
       chart: git-repo/helmchart
       release: deploy
       uninstall: false
-  on_success:
-    put: slack
-    params:
-      text: "Deployment is successful in Europe region..:yay:"
-      silent: true
-  on_failure:
-    put: slack
-    params:
-      text: "Deployment failed in Europe region.."
-      silent: true
