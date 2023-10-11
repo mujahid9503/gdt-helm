@@ -20,6 +20,7 @@ resources:
       username: ((hub-username))
       password: ((hub-password))
       repository: 23380/test-image-9
+      tag: 1.0.0
 
   - name: helm-deploy-mumbai
     type: helm
