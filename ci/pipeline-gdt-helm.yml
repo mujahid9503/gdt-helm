@@ -24,7 +24,7 @@ resources:
   - name: helm-deploy-mumbai
     type: helm
     source:
-      cluster_url: https://75D5EF5B0DBF24B3752B4BE445E12984.gr7.ap-south-1.eks.amazonaws.com
+      cluster_url: https://83698CD24CE23277E76110C9F930A5A0.gr7.ap-south-1.eks.amazonaws.com
       cluster_ca: ((cluster-ca-mumbai))
       token: ((token-mumbai))
       repos:
@@ -34,7 +34,7 @@ resources:
   - name: helm-deploy-london
     type: helm
     source:
-      cluster_url: https://0B3E842D45FDE12169A59FB07EB60DF6.gr7.eu-west-2.eks.amazonaws.com
+      cluster_url: https://974A113BF202CC9DC25AFD70B39ABB98.gr7.eu-west-2.eks.amazonaws.com
       cluster_ca: ((cluster-ca-london))
       token: ((token-london))
       repos:
@@ -42,7 +42,7 @@ resources:
           url: https://mujahid9503.github.io/gdt-helm/
 
 jobs:
-- name: build-and-push
+- name: build-and-push-docker-image
   serial: false
   plan:
   - get: gdt-testing-phase
@@ -52,23 +52,11 @@ jobs:
   - put: docker-hub
     params:
       build: gdt-testing-phase/
-- name: deploy-asia-region
-  serial: false
-  plan:
-  - get: gdt-testing-phase
-    passed: [build-and-push]
-    trigger: true
   - put: helm-deploy-mumbai
     params:
       chart: git-repo/helmchart
       release: deploy
       uninstall: false
-- name: deploy-europe-region
-  serial: false
-  plan:
-  - get: gdt-testing-phase
-    passed: [build-and-push]
-    trigger: true
   - put: helm-deploy-london
     params:
       chart: git-repo/helmchart
